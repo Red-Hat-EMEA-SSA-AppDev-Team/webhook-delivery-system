@@ -1,0 +1,9 @@
+credentials:
+- username: cameluser
+  password: P@ssw0rd
+  roles:
+  - admin
+- username: consoleuser
+  password: P@ssw0rd
+  roles:
+  - admin

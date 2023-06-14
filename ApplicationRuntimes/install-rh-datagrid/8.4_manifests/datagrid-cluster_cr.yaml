@@ -1,0 +1,70 @@
+# Reference: https://access.redhat.com/documentation/en-us/red_hat_data_grid/8.3/html/data_grid_operator_guide/creating-services#datagrid-cr_services
+apiVersion: infinispan.org/v1
+kind: Infinispan
+metadata:
+  name: datagrid-cluster
+  annotations:
+    # Automatically creates a ServiceMonitor for the cluster. 
+    infinispan.org/monitoring: 'true'
+spec:
+  replicas: 1
+  upgrades:
+    type: Shutdown
+  service:
+    type: DataGrid
+    # Configures the storage resources for Data Grid service pods. 
+    container:
+      storage: 5Gi # Default: 1Gi
+      # storageClassName: gp2
+  security:
+    # Specifies an authentication secret that contains Data Grid user credentials.
+    endpointSecretName: authentication-secret
+    # Specifies TLS certificates or keystore to encrypt client connections. 
+    endpointEncryption:
+      # type: None # Do not disable encryption if endpoints are accessible from outside the OpenShift cluster via spec.expose.type
+      type: Secret
+      certSecretName: datagrid-cluster-tls-secret
+    # RBAC
+    authorization:
+      enabled: false
+  # Specifies JVM, CPU, and memory resources for Data Grid pods. 
+  container:
+    extraJvmOpts: "-XX:NativeMemoryTracking=summary -Xlog:gc*:stdout:time,level,tags"
+    cpu: "2000m:1000m"
+    memory: "2Gi:1Gi"
+  # Configures Data Grid logging categories. 
+  logging:
+    categories:
+      org.infinispan: info # Data Grid messages. Default: info
+      org.jgroups: info # Cluster transport messages. Default: info
+      org.jgroups.protocols.TCP: error
+      org.jgroups.protocols.relay.RELAY2: error
+  expose:
+    type: Route
+    host: datagrid-cluster.apps.cluster.ocp-hamid.com
+  # Creates a listener pod in each Data Grid cluster that allows Data Grid Operator 
+  # to reconcile server-side modifications with Data Grid resources such as the Cache CR. 
+  configListener: 
+    enabled: true
+  # Configures anti-affinity strategies that guarantee Data Grid availability.
+  # Here: prefers multiple zones when scheduling pods but schedules Data Grid replica pods on 
+  # different OpenShift nodes if it is not possible to schedule across zones 
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app: infinispan-pod
+              clusterName: datagrid-cluster
+              infinispan_cr: datagrid-cluster
+          topologyKey: "topology.kubernetes.io/zone"
+      - weight: 90
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app: infinispan-pod
+              clusterName: datagrid-cluster
+              infinispan_cr: datagrid-cluster
+          topologyKey: "kubernetes.io/hostname"
