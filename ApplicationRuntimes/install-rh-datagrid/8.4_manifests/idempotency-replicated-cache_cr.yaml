@@ -1,0 +1,9 @@
+# Reference: https://access.redhat.com/documentation/en-us/red_hat_data_grid/8.3/html/configuring_data_grid_caches/cache-configuration
+apiVersion: infinispan.org/v2alpha1
+kind: Cache
+metadata:
+  name: idempotency-replicated-cache-definition
+spec:
+  clusterName: datagrid-cluster
+  name: idempotency-replicated-cache
+  template: <replicated-cache mode="SYNC" statistics="true"><encoding media-type="application/x-protostream"/><expiration lifespan="300000" max-idle="-1"/><memory max-count="1000000" when-full="REMOVE"/><persistence passivation="false"><file-store/></persistence></replicated-cache>

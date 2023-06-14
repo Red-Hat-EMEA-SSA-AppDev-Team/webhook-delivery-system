@@ -1,0 +1,9 @@
+# Reference: https://access.redhat.com/documentation/en-us/red_hat_data_grid/8.4/guide/990f6af5-2a9c-4af1-afaf-d2ea562c5bf8
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: infinispan-operator-config
+data:
+  grafana.dashboard.namespace: webhook-delivery-system
+  grafana.dashboard.name: datagrid-cluster
+  grafana.dashboard.monitoring.key: middleware
