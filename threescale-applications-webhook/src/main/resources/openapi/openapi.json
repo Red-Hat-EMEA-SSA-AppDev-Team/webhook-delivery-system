@@ -1,0 +1,202 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "3scale Applications Handler Webhook",
+        "version": "1.0.0",
+        "description": "API that handles 3scale Admin/Developer Portals webhook events related to Applications",
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://threescale-applications-webhook.apps.apps.cluster.ocp-hamid.com",
+            "description": "API Backend URL"
+        }
+    ],
+    "paths": {
+        "/webhook/applicationurl": {
+            "summary": "Listens to 3scale Admin/Developer Portals webhook events and saves application webhook-url to a database table",
+            "description": "Callback endpoint that receives 3scale Admin/Developer Portals webhook events in order to save the application webhook-url to a database table",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageOK": {
+                                        "value": {
+                                            "status": "OK"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Pong"
+                    }
+                },
+                "operationId": "pingWebhook",
+                "summary": "Handles 3scale webhook ping",
+                "description": "Handles 3scale webhook ping"
+            },
+            "post": {
+                "requestBody": {
+                    "description": "3scale Admin/Developer Portal webhook event in XML format",
+                    "content": {
+                        "application/xml": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "examples": {
+                                "applicatiionCreated": {
+                                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<event>\n    <action>created</action>\n    <type>application</type>\n    <object>\n        <application>\n            <id>6992</id>\n            <created_at>2023-06-14T15:37:32+02:00</created_at>\n            <updated_at>2023-06-14T15:37:32+02:00</updated_at>\n            <state>pending</state>\n            <user_account_id>1791</user_account_id>\n            <first_traffic_at />\n            <first_daily_traffic_at />\n            <service_id>1319</service_id>\n            <user_key>ae61cf0a5e082f3cd0b54dc53cfba280</user_key>\n            <provider_verification_key>191222d51a5bceabd47a2084acea90f1</provider_verification_key>\n            <plan custom=\"false\" default=\"false\">\n                <id>4296</id>\n                <name>RHOAM Open API Plan</name>\n                <type>application_plan</type>\n                <state>published</state>\n                <approval_required>true</approval_required>\n                <setup_fee>5.0</setup_fee>\n                <cost_per_month>2.99</cost_per_month>\n                <trial_period_days />\n                <cancellation_period>0</cancellation_period>\n                <service_id>1319</service_id>\n            </plan>\n            <name>Red Hat's App</name>\n            <description>Red Hat application to the RHOAM Quarkus API</description>\n            <extra_fields>\n                <webhook-url>https://webhook.site/c24da183-1a6c-454f-82a5-ed9f188d2f5b</webhook-url>\n            </extra_fields>\n        </application>\n    </object>\n</event>"
+                                }
+                            }
+                        },
+                        "text/xml": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "examples": {
+                                "applicationCreated": {
+                                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<event>\n    <action>created</action>\n    <type>application</type>\n    <object>\n        <application>\n            <id>6992</id>\n            <created_at>2023-06-14T15:37:32+02:00</created_at>\n            <updated_at>2023-06-14T15:37:32+02:00</updated_at>\n            <state>pending</state>\n            <user_account_id>1791</user_account_id>\n            <first_traffic_at />\n            <first_daily_traffic_at />\n            <service_id>1319</service_id>\n            <user_key>ae61cf0a5e082f3cd0b54dc53cfba280</user_key>\n            <provider_verification_key>191222d51a5bceabd47a2084acea90f1</provider_verification_key>\n            <plan custom=\"false\" default=\"false\">\n                <id>4296</id>\n                <name>RHOAM Open API Plan</name>\n                <type>application_plan</type>\n                <state>published</state>\n                <approval_required>true</approval_required>\n                <setup_fee>5.0</setup_fee>\n                <cost_per_month>2.99</cost_per_month>\n                <trial_period_days />\n                <cancellation_period>0</cancellation_period>\n                <service_id>1319</service_id>\n            </plan>\n            <name>Red Hat's App</name>\n            <description>Red Hat application to the RHOAM Quarkus API</description>\n            <extra_fields>\n                <webhook-url>https://webhook.site/c24da183-1a6c-454f-82a5-ed9f188d2f5b</webhook-url>\n            </extra_fields>\n        </application>\n    </object>\n</event>"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageOK": {
+                                        "value": {
+                                            "status": "OK"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "RHOAM XML event handled."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageKO400": {
+                                        "value": {
+                                            "status": "KO",
+                                            "error": {
+                                                "code": "400",
+                                                "description": "Bad Request",
+                                                "message": "org.apache.camel.TypeConversionException: Error during type conversion from type: java.lang.String to the required type: org.w3c.dom.Document with value PLAIN TEXT DATA\n due to org.xml.sax.SAXParseException: Content is not allowed in prolog."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageKO500": {
+                                        "value": {
+                                            "status": "KO",
+                                            "error": {
+                                                "code": "500",
+                                                "description": "Internal Server Error",
+                                                "message": "java.lang.Exception: Mocked error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Internal server error"
+                    }
+                },
+                "operationId": "saveApplicationUrlToDB",
+                "summary": "Handles a 3scale Admin/Developer Portal application webhook event and saves its webhook-url value in a database table",
+                "description": ""
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ResponseMessage": {
+                "title": "Root Type for ResponseMessage",
+                "description": "Response message",
+                "required": [
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "description": "Status",
+                        "enum": [
+                            "OK",
+                            "KO"
+                        ],
+                        "type": "string"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorMessageType",
+                        "description": "Status message"
+                    }
+                },
+                "example": {
+                    "status": "KO",
+                    "error": {
+                        "code": "500",
+                        "description": "Internal server error",
+                        "message": "java.lang.Exception: mocked error"
+                    }
+                }
+            },
+            "ErrorMessageType": {
+                "title": "Root Type for StatusMessageType",
+                "description": "Error message type  ",
+                "required": [
+                    "code",
+                    "description",
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "code": "500",
+                    "description": "Internal server error",
+                    "message": "java.lang.Exception: mocked error"
+                }
+            }
+        }
+    }
+}
