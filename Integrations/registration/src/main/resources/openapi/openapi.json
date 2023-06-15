@@ -1,9 +1,9 @@
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "3scale Applications Handler Webhook",
+        "title": "Webhook Dispatcher Delivery Registration",
         "version": "1.0.0",
-        "description": "API that handles 3scale Admin/Developer Portals webhook events related to Applications",
+        "description": "Webhook callback that handles 3scale Admin/Developer Portals events related to Applications",
         "license": {
             "name": "MIT License",
             "url": "https://opensource.org/licenses/MIT"
@@ -17,8 +17,7 @@
     ],
     "paths": {
         "/webhook/applicationurl": {
-            "summary": "Listens to 3scale Admin/Developer Portals webhook events and saves application webhook-url to a database table",
-            "description": "Callback endpoint that receives 3scale Admin/Developer Portals webhook events in order to save the application webhook-url to a database table",
+            "summary": "Callback endpoint that receives 3scale Admin/Developer Portals webhook events in order to save the application webhook-url to a database table",
             "get": {
                 "responses": {
                     "200": {

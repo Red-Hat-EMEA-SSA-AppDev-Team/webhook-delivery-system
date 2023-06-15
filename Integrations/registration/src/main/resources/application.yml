@@ -3,7 +3,7 @@
 # Camel
 camel:
     context:
-        name: threescale-applications-webhook
+        name: registration
 
 # Quarkus
 quarkus:
@@ -26,7 +26,7 @@ quarkus:
         # The kind of the deployment resource to use. Supported values are 'Deployment', 'StatefulSet', 'Job', 'CronJob' and 'DeploymentConfig' defaulting to the latter.
         deployment-kind: Deployment
         # Part of the `Threescale-Extensions` Application Group
-        part-of: Threescale-Extensions
+        part-of: Webhook-Delivery-System
         # The build config strategy to use
         build-strategy: docker
         # The default Dockerfile to use for jvm builds

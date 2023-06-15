@@ -1,4 +1,4 @@
-# threescale-applications-webhook project
+# registration project
 
 This project leverages **Red Hat build of Quarkus 2.13.x**, the Supersonic Subatomic Java Framework. More specifically, the project is implemented using [**Red Hat Camel Extensions for Quarkus 2.13.x**](https://access.redhat.com/documentation/en-us/red_hat_integration/2023.q1/html/getting_started_with_camel_extensions_for_quarkus/index).
 
@@ -29,7 +29,7 @@ It exposes the following RESTful service endpoints  using **Apache Camel REST DS
         ```
     - On OpenShift, either:
         - Adjust the [`openshift.yml`](./src/main/kubernetes/openshift.yml) file before building and deploying using the quarkus maven plugin
-        - Or, adjust connection values in the created `threescale-applications-webhook-config` configMap and `threescale-applications-webhook-secret` secret.
+        - Or, adjust connection values in the created `registration-config` configMap and `registration-secret` secret.
 
 - **OPTIONAL**: [**Jaeger**](https://www.jaegertracing.io/), a distributed tracing system for observability ([_open tracing_](https://opentracing.io/)). :bulb: A simple way of starting a Jaeger tracing server is with `docker` or `podman`:
     1. Start the Jaeger tracing server:
@@ -121,7 +121,7 @@ The application, packaged as an _über-jar_, is now runnable using `java -jar ta
         EOF
         ```
 
-4. Use the _**S2I binary workflow**_ or _**S2I source workflow**_ to deploy the `threescale-applications-webhook` app
+4. Use the _**S2I binary workflow**_ or _**S2I source workflow**_ to deploy the `registration` app
 
     ```shell script
     ./mvnw clean package -Dquarkus.kubernetes.deploy=true -Dquarkus.container-image.group=webhook-delivery-system
@@ -138,7 +138,7 @@ The application, packaged as an _über-jar_, is now runnable using `java -jar ta
 
 1. Get the OpenShift route hostname
     ```shell script
-    URL="http://$(oc get route threescale-applications-webhook -o jsonpath='{.spec.host}')"
+    URL="http://$(oc get route registration -o jsonpath='{.spec.host}')"
     ```
     
 2. Test the `/webhook/applicationurl` endpoint
