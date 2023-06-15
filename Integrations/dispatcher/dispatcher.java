@@ -28,8 +28,8 @@ public class dispatcher extends RouteBuilder {
         //.to("http://sampleurl.com?bridgeEndpoint=true&throwExceptionOnFailure=false")
           
                  
-        --.marshal().json(JsonLibrary.Gson)
-        --.to("kafka:orders-filtered-topic");
+       //.marshal().json(JsonLibrary.Gson)
+        //.to("kafka:orders-filtered-topic");
     }
 
 }
