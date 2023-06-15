@@ -5,6 +5,7 @@
 // camel-k: dependency=camel:infinispan
 // camel-k: dependency=mvn:io.quarkus:quarkus-jdbc-postgresql
 // camel-k: resource=secret:dispatcher-truststore-secret@/mnt/ssl
+// camel-k: trait=prometheus.enabled=true trait=tracing.enabled=true
 // camel-k: trait=tracing.endpoint=http://jaeger-all-in-one-inmemory-collector.webhook-delivery-system.svc:14268/api/traces
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
