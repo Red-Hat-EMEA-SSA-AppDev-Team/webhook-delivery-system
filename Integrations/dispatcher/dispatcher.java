@@ -2,7 +2,7 @@
 // camel-k: language=java property=file:kafka.properties
 // camel-k: dependency=camel:gson
 // camel-k: dependency=camel:jdbc
-// camel-k: dependency=camel-quarkus-infinispan
+// camel-k: dependency=camel:infinispan
 // camel-k: dependency=mvn:io.quarkus:quarkus-jdbc-postgresql
 // camel-k: resource=secret:dispatcher-truststore-secret@/mnt/ssl
 // camel-k: trait=tracing.endpoint=http://jaeger-all-in-one-inmemory-collector.webhook-delivery-system.svc:14268/api/traces
@@ -11,16 +11,37 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository;
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration;
+import org.infinispan.client.hotrod.configuration.ClientIntelligence;
+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.infinispan.client.hotrod.impl.ConfigurationProperties;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import javax.inject.Inject;
 
-public class dispatcher extends RouteBuilder {
+public class Dispatcher extends RouteBuilder {
 
-    @Inject
-    RemoteCacheManager remoteCacheManager;
+    // @Inject
+    // RemoteCacheManager remoteCacheManager;
 
     @Override
     public void configure() throws Exception {
+
+      ConfigurationBuilder builder = new ConfigurationBuilder();
+        builder.addServer()
+          .host("datagrid-cluster.webhook-delivery-system.svc")
+          .port(ConfigurationProperties.DEFAULT_HOTROD_PORT)
+        .security()
+          .ssl()
+            .trustStoreFileName("/mnt/ssl/truststore.p12")
+            .trustStorePassword("P@ssw0rd".toCharArray())
+          .authentication()
+            .username("cameluser")
+            .password("P@ssw0rd")
+            .realm("default")
+            .saslMechanism("PLAIN")
+            .clientIntelligence(ClientIntelligence.HASH_DISTRIBUTION_AWARE);
+      
+      RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
       
       // MemoryIdempotentRepository memoryIdempotentRepository = new MemoryIdempotentRepository();
       InfinispanRemoteIdempotentRepository infinispanRemoteIdempotentRepository = new InfinispanRemoteIdempotentRepository("idempotency-replicated-cache");
