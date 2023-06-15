@@ -37,7 +37,7 @@ public class dispatcher extends RouteBuilder {
 
                 .to("https://t1-admin.apps.cluster.ocp-hamid.com/admin/api/applications/find.json?bridgeEndpoint=true&throwExceptionOnFailure=false")// &throwExceptionOnFailure=false
                 .choice()
-                .when(header(Exchange.HTTP_RESPONSE_CODE).isEqualTo("200"))
+                .when(header(Exchange.HTTP_RESPONSE_CODE).isEqualTo("200")) 
                 .setProperty("user_key").jsonpath("$.application.user_key", String.class)
                 .setProperty("webhook-url").jsonpath("$.application.webhook-url", String.class)
                 .log("user_key=${exchangeProperty.user_key} webhook-url=${exchangeProperty.webhook-url}")
