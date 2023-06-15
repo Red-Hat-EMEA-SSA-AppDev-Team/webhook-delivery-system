@@ -38,5 +38,5 @@
     ```
 2. Run and deploy the Camel-K dispatcher integration
     ```script shell
-    kamel run dispatcher-testDG ./dispatcher.java
+    kamel run dispatcher-testDG ./Dispatcher.java
     ```
