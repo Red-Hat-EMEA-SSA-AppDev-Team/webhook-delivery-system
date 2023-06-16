@@ -10,6 +10,8 @@
 // camel-k: trait=keda.min-replica-count=1
 // camel-k: trait=keda.max-replica-count=10
 // camel-k: trait=keda.triggers[0].type=kafka
+// camel-k: dependency=camel:infinispan
+// camel-k: resource=secret:dispatcher-truststore-secret@/mnt/ssl
 
 
 // camel-k: trait=keda.triggers[0].metadata.topic=order-created-event
