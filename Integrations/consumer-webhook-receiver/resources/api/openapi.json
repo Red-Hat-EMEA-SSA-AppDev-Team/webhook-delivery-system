@@ -1,0 +1,185 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "Consumer Webhook Receiver",
+        "version": "1.0.0",
+        "description": "",
+        "contact": {
+            "name": "Jean Nyilimbibi"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://rhoam-webhook-events-handler-api.apps.jeannyil.sandbox1789.opentlc.com",
+            "description": "API Backend URL"
+        }
+    ],
+    "paths": {
+        "/webhook/consumer": {
+            "summary": "Consumer webhook that log the received event",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageOK": {
+                                        "value": {
+                                            "status": "OK"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Pong"
+                    }
+                },
+                "operationId": "pingWebhook",
+                "summary": "Handles webhook ping",
+                "description": "Handles webhook ping"
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Event payload",
+                    "content": {
+                        "application/json": {}
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageOK": {
+                                        "value": {
+                                            "status": "OK"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "RHOAM XML event handled."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageKO400": {
+                                        "value": {
+                                            "status": "KO",
+                                            "error": {
+                                                "code": "400",
+                                                "description": "Bad Request",
+                                                "message": "org.apache.camel.TypeConversionException: Error during type conversion from type: java.lang.String to the required type: org.w3c.dom.Document with value PLAIN TEXT DATA\n due to org.xml.sax.SAXParseException: Content is not allowed in prolog."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseMessage"
+                                },
+                                "examples": {
+                                    "responseMessageKO500": {
+                                        "value": {
+                                            "status": "KO",
+                                            "error": {
+                                                "code": "500",
+                                                "description": "Internal Server Error",
+                                                "message": "java.lang.Exception: Mocked error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Internal server error"
+                    }
+                },
+                "operationId": "logEvent",
+                "summary": "Log received event",
+                "description": ""
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ResponseMessage": {
+                "title": "Root Type for ResponseMessage",
+                "description": "Response message",
+                "required": [
+                    "status"
+                ],
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "description": "Status",
+                        "enum": [
+                            "OK",
+                            "KO"
+                        ],
+                        "type": "string"
+                    },
+                    "error": {
+                        "$ref": "#/components/schemas/ErrorMessageType",
+                        "description": "Status message"
+                    }
+                },
+                "example": {
+                    "status": "KO",
+                    "error": {
+                        "code": "500",
+                        "description": "Internal server error",
+                        "message": "java.lang.Exception: mocked error"
+                    }
+                }
+            },
+            "ErrorMessageType": {
+                "title": "Root Type for StatusMessageType",
+                "description": "Error message type  ",
+                "required": [
+                    "code",
+                    "description",
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "code": "500",
+                    "description": "Internal server error",
+                    "message": "java.lang.Exception: mocked error"
+                }
+            }
+        }
+    }
+}
