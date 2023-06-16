@@ -18,27 +18,51 @@
 
 
 
- 
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteIdempotentRepository;
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration;
+import org.infinispan.client.hotrod.configuration.ClientIntelligence;
+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.infinispan.client.hotrod.impl.ConfigurationProperties;
+import org.infinispan.client.hotrod.RemoteCacheManager; 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 //import org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 
-public class dispatcher extends RouteBuilder {
+public class Dispatcher extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
 
-         
+        ConfigurationBuilder builder = new ConfigurationBuilder();
+        builder.addServer()
+          .host("datagrid-cluster.webhook-delivery-system.svc")
+          .port(ConfigurationProperties.DEFAULT_HOTROD_PORT)
+        .security()
+          .ssl()
+            .trustStoreFileName("/mnt/ssl/truststore.p12")
+            .trustStorePassword("P@ssw0rd".toCharArray())
+          .authentication()
+            .username("cameluser")
+            .password("P@ssw0rd")
+            .realm("default")
+            .saslMechanism("PLAIN")
+            .clientIntelligence(ClientIntelligence.HASH_DISTRIBUTION_AWARE);
+      
+      RemoteCacheManager remoteCacheManager = new RemoteCacheManager(builder.build());
+      
+      // MemoryIdempotentRepository memoryIdempotentRepository = new MemoryIdempotentRepository();
+      InfinispanRemoteIdempotentRepository infinispanRemoteIdempotentRepository = new InfinispanRemoteIdempotentRepository("idempotency-replicated-cache");
+      infinispanRemoteIdempotentRepository.setCacheContainer(remoteCacheManager);
        
 
-        MemoryIdempotentRepository memoryIdempotentRepository = new MemoryIdempotentRepository();
+        //MemoryIdempotentRepository memoryIdempotentRepository = new MemoryIdempotentRepository();
 
         from("kafka:order-created-event?groupId=order-webhook-delivery")
                 .setProperty("notification", simple("${body}"))
                 .unmarshal().json(JsonLibrary.Gson)
-                .idempotentConsumer(simple("${body[eventId]}"), memoryIdempotentRepository)
+                .idempotentConsumer(simple("${body[eventId]}"), infinispanRemoteIdempotentRepository)
                 .log("Order created with eventID: ${body[eventId]}")
                 .setBody(constant("select app_id from  wh_registration where  product_id=130"))
                 .to("jdbc:default")
