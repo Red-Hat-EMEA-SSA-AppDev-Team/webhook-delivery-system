@@ -97,15 +97,7 @@
     "createdAt": 1614617770138
     
  },
- {
-   "eventId": "1454",
-    "name": "Ram",
-    "email": "ram@gmail.com",
-    "accountId": "1234",
-    "status": "ORDER_CREATED",
-    "createdAt": 1614617770138
-    
- },
+
  {
    "eventId": "1efsm5",
     "name": "Ram",
