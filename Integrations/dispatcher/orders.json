@@ -69,15 +69,7 @@
     "createdAt": 1614617770138
     
  },
- {
-   "eventId": "1",
-    "name": "Ram",
-    "email": "ram@gmail.com",
-    "accountId": "1234",
-    "status": "ORDER_CREATED",
-    "createdAt": 1614617770138
-    
- },
+
  {
    "eventId": "1454",
     "name": "Ram",
@@ -150,15 +142,7 @@
     "createdAt": 1614617770138
     
  },
- {
-   "eventId": "1",
-    "name": "Ram",
-    "email": "ram@gmail.com",
-    "accountId": "1234",
-    "status": "ORDER_CREATED",
-    "createdAt": 1614617770138
-    
- },
+
  {
    "eventId": "1962x",
     "name": "Ram",
@@ -168,16 +152,8 @@
     "createdAt": 1614617770138
     
  },
- {
-   "eventId": "1",
-    "name": "Ram",
-    "email": "ram@gmail.com",
-    "accountId": "1234",
-    "status": "ORDER_CREATED",
-    "createdAt": 1614617770138
-    
- }
- ,
+
+
  {
    "eventId": "1988",
     "name": "Ram",
@@ -187,15 +163,7 @@
     "createdAt": 1614617770138
     
  },
- {
-   "eventId": "1",
-    "name": "Ram",
-    "email": "ram@gmail.com",
-    "accountId": "1234",
-    "status": "ORDER_CREATED",
-    "createdAt": 1614617770138
-    
- },
+
  {
    "eventId": "180",
     "name": "Ram",
