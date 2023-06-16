@@ -4,6 +4,21 @@
 // camel-k: dependency=camel:jdbc
 // camel-k: dependency=mvn:io.quarkus:quarkus-jdbc-postgresql
 // camel-k: trait=tracing.endpoint=http://jaeger-all-in-one-inmemory-collector.webhook-delivery-system.svc:14268/api/traces
+// camel-k: trait=keda.enabled=true
+// camel-k: trait=keda.polling-interval=1
+// camel-k: trait=keda.cooldown-period=200
+// camel-k: trait=keda.min-replica-count=1
+// camel-k: trait=keda.max-replica-count=10
+// camel-k: trait=keda.triggers[0].type=kafka
+
+
+// camel-k: trait=keda.triggers[0].metadata.topic=order-created-event
+// camel-k: trait=keda.triggers[0].metadata.bootstrapServers=my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+// camel-k: trait=keda.triggers[0].metadata.consumerGroup=order-webhook-delivery
+
+
+
+ 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -20,7 +35,7 @@ public class dispatcher extends RouteBuilder {
 
         MemoryIdempotentRepository memoryIdempotentRepository = new MemoryIdempotentRepository();
 
-        from("kafka:order-created-event")
+        from("kafka:order-created-event?groupId=order-webhook-delivery")
                 .setProperty("notification", simple("${body}"))
                 .unmarshal().json(JsonLibrary.Gson)
                 .idempotentConsumer(simple("${body[eventId]}"), memoryIdempotentRepository)
@@ -37,7 +52,7 @@ public class dispatcher extends RouteBuilder {
 
                 .to("https://t1-admin.apps.cluster.ocp-hamid.com/admin/api/applications/find.json?bridgeEndpoint=true&throwExceptionOnFailure=false")// &throwExceptionOnFailure=false
                 .choice()
-                .when(header(Exchange.HTTP_RESPONSE_CODE).isEqualTo("200")) 
+                .when(header(Exchange.HTTP_RESPONSE_CODE).isEqualTo("200"))
                 .setProperty("user_key").jsonpath("$.application.user_key", String.class)
                 .setProperty("webhook-url").jsonpath("$.application.webhook-url", String.class)
                 .log("user_key=${exchangeProperty.user_key} webhook-url=${exchangeProperty.webhook-url}")
